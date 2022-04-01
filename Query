@@ -1,0 +1,8 @@
+let clk = pack_array('A potentially malicious URL click', 'Suspicious URL clicked');
+TABLE
+| project 
+    Title, Timestamp, AlertId, DetectionSource
+| where 
+    Title has_any (clk)
+| where 
+    Timestamp >= ago(1hr)
