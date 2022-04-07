@@ -6,3 +6,14 @@ TABLE
     Title has_any (clk)
 | where 
     Timestamp >= ago(1hr)
+    
+/// V2
+//////////////
+let clk = pack_array('A potentially malicious URL click', 'Suspicious URL clicked');
+AlertInfo
+| where Title has_any (clk)
+| project Title, AlertId, Timestamp
+| where Timestamp >= ago(5h)
+| join kind=inner (AlertEvidence | project DeviceId, AlertId, DeviceName) on AlertId
+| where isnotempty(DeviceId)
+    
