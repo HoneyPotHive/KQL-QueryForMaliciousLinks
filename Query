@@ -19,7 +19,10 @@ AlertInfo
 | join kind=inner 
     (AlertEvidence | project DeviceId, AlertId, DeviceName) on AlertId
 | join kind=inner 
-    (DeviceEvents | project ReportId, DeviceId) on DeviceId
+    (DeviceEvents 
+        | project ReportId, DeviceId, AccountName, AccountSid, AccountDomain
+        | where isnotempty(AccountName)
+        | where AccountName != "system") on DeviceId
 | where 
     isnotempty(DeviceId)
 | summarize 
