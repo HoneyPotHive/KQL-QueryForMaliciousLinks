@@ -11,6 +11,7 @@ TABLE
 //////////////
 let clk = pack_array('A potentially malicious URL click', 'Suspicious URL clicked');
 AlertInfo
+| project AlertId, Title, Timestamp
 | where 
     Title has_any(clk)
 | where 
@@ -18,8 +19,8 @@ AlertInfo
 | join kind=inner 
     (AlertEvidence | project DeviceId, AlertId, DeviceName) on AlertId
 | join kind=inner 
-    (DeviceEvents | project DeviceId, ReportId) on DeviceId
+    (DeviceEvents | project ReportId, DeviceId) on DeviceId
 | where 
     isnotempty(DeviceId)
 | summarize 
-    arg_max(Timestamp, *) by AlertId
+    arg_max(Timestamp, *) by DeviceName
