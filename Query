@@ -11,9 +11,15 @@ TABLE
 //////////////
 let clk = pack_array('A potentially malicious URL click', 'Suspicious URL clicked');
 AlertInfo
-| where Title has_any(clk)
-| where Timestamp >= ago(24h)
-| join kind=inner (AlertEvidence | project DeviceId, AlertId, DeviceName) on AlertId
-| join kind=inner (DeviceEvents | project DeviceId, ReportId) on DeviceId
-| where isnotempty(DeviceId)
-| summarize arg_max(Timestamp, *) by AlertId
+| where 
+    Title has_any(clk)
+| where 
+    Timestamp >= ago(24h) // h = hour d = days - Change scope of time frame of incident
+| join kind=inner 
+    (AlertEvidence | project DeviceId, AlertId, DeviceName) on AlertId
+| join kind=inner 
+    (DeviceEvents | project DeviceId, ReportId) on DeviceId
+| where 
+    isnotempty(DeviceId)
+| summarize 
+    arg_max(Timestamp, *) by AlertId
